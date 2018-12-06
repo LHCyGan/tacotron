@@ -52,7 +52,7 @@ Pull requests are welcome!
 curl http://data.keithito.com/data/speech/tacotron-20180906.tar.gz | tar xzC /tmp
 ```
 
-For a basic Chinese model please check <https://github.com/boltomli/tacotron/releases/tag/v0.1-cpu.11200>. It supports only Pinyin input with separating spaces. See `eval.py` for samples. To try on GPU machine, set `CUDA_VISIBLE_DEVICES=""` for the next command to force CPU.
+For a basic Chinese model please check <https://github.com/boltomli/tacotron/releases/>. It supports only Pinyin input with separating spaces. See `eval.py` for samples. To try on GPU machine, set `CUDA_VISIBLE_DEVICES=""` for the next command to force CPU.
 
 1. **Run the demo server**:
 
