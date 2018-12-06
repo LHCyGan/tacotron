@@ -44,23 +44,24 @@ Pull requests are welcome!
    pip install -r requirements.txt
    ```
 
-
 ### Using a pre-trained model
 
 1. **Download and unpack a model**:
-   ```
-   curl http://data.keithito.com/data/speech/tacotron-20180906.tar.gz | tar xzC /tmp
-   ```
 
-2. **Run the demo server**:
-   ```
-   python3 demo_server.py --checkpoint /tmp/tacotron-20180906/model.ckpt
-   ```
+```shell
+curl http://data.keithito.com/data/speech/tacotron-20180906.tar.gz | tar xzC /tmp
+```
 
-3. **Point your browser at localhost:9000**
+For a basic Chinese model please check <https://github.com/boltomli/tacotron/releases/tag/v0.1-cpu.11200>. It supports only Pinyin input with separating spaces. See `eval.py` for samples. To try on GPU machine, set `CUDA_VISIBLE_DEVICES=""` for the next command to force CPU.
+
+1. **Run the demo server**:
+
+```shell
+python3 demo_server.py --checkpoint /tmp/tacotron-20180906/model.ckpt
+```
+
+1. **Point your browser at localhost:9000**
    * Type what you want to synthesize
-
-
 
 ### Training
 
