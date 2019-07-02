@@ -71,6 +71,7 @@ Pull requests are welcome!
    The following are supported out of the box:
     * [LJ Speech](https://keithito.com/LJ-Speech-Dataset/) (Public Domain)
     * [Blizzard 2012](http://www.cstr.ed.ac.uk/projects/blizzard/2012/phase_one) (Creative Commons Attribution Share-Alike)
+    * [RUSLAN](https://ruslan-corpus.github.io) (Creative Commons Attribution Non-Commercial Share-Alike 4.0 International)
 
    You can use other datasets if you convert them to the right format. See [TRAINING_DATA.md](TRAINING_DATA.md) for more info.
 
@@ -101,7 +102,7 @@ Pull requests are welcome!
 
 3. **Preprocess the data**
    ```
-   python3 preprocess.py --dataset ljspeech
+   python3 preprocess.py --dataset ruslan
    ```
      * Use `--dataset blizzard` for Blizzard data
 
