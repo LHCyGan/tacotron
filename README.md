@@ -73,7 +73,7 @@ python3 demo_server.py --checkpoint /tmp/tacotron-20180906/model.ckpt
     * [LJ Speech](https://keithito.com/LJ-Speech-Dataset/) (Public Domain)
     * [Blizzard 2012](http://www.cstr.ed.ac.uk/projects/blizzard/2012/phase_one) (Creative Commons Attribution Share-Alike)
 
-   You can use other datasets if you convert them to the right format. See [TRAINING_DATA.md](TRAINING_DATA.md) for more info.
+   You can use other datasets if you convert them to the right format. See [TRAINING_DATA.md](TRAINING_DATA.md) for more info. Especially, **Chinese data** from databaker is supported.
 
 
 2. **Unpack the dataset into `~/tacotron`**
