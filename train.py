@@ -23,19 +23,19 @@ def get_git_commit():
 
 
 def add_stats(model):
-  with tf.variable_scope('stats') as scope:
-    tf.summary.histogram('linear_outputs', model.linear_outputs)
-    tf.summary.histogram('linear_targets', model.linear_targets)
-    tf.summary.histogram('mel_outputs', model.mel_outputs)
-    tf.summary.histogram('mel_targets', model.mel_targets)
-    tf.summary.scalar('loss_mel', model.mel_loss)
-    tf.summary.scalar('loss_linear', model.linear_loss)
-    tf.summary.scalar('learning_rate', model.learning_rate)
-    tf.summary.scalar('loss', model.loss)
-    gradient_norms = [tf.norm(grad) for grad in model.gradients]
-    tf.summary.histogram('gradient_norm', gradient_norms)
-    tf.summary.scalar('max_gradient_norm', tf.reduce_max(gradient_norms))
-    return tf.summary.merge_all()
+  with tf.compat.v1.variable_scope('stats') as scope:
+    tf.compat.v1.summary.histogram('linear_outputs', model.linear_outputs)
+    tf.compat.v1.summary.histogram('linear_targets', model.linear_targets)
+    tf.compat.v1.summary.histogram('mel_outputs', model.mel_outputs)
+    tf.compat.v1.summary.histogram('mel_targets', model.mel_targets)
+    tf.compat.v1.summary.scalar('loss_mel', model.mel_loss)
+    tf.compat.v1.summary.scalar('loss_linear', model.linear_loss)
+    tf.compat.v1.summary.scalar('learning_rate', model.learning_rate)
+    tf.compat.v1.summary.scalar('loss', model.loss)
+    gradient_norms = [tf.norm(tensor=grad) for grad in model.gradients]
+    tf.compat.v1.summary.histogram('gradient_norm', gradient_norms)
+    tf.compat.v1.summary.scalar('max_gradient_norm', tf.reduce_max(input_tensor=gradient_norms))
+    return tf.compat.v1.summary.merge_all()
 
 
 def time_string():
@@ -53,12 +53,12 @@ def train(log_dir, args):
 
   # Set up DataFeeder:
   coord = tf.train.Coordinator()
-  with tf.variable_scope('datafeeder') as scope:
+  with tf.compat.v1.variable_scope('datafeeder') as scope:
     feeder = DataFeeder(coord, input_path, hparams)
 
   # Set up model:
   global_step = tf.Variable(0, name='global_step', trainable=False)
-  with tf.variable_scope('model') as scope:
+  with tf.compat.v1.variable_scope('model') as scope:
     model = create_model(args.model, hparams)
     model.initialize(feeder.inputs, feeder.input_lengths, feeder.mel_targets, feeder.linear_targets)
     model.add_loss()
@@ -69,13 +69,13 @@ def train(log_dir, args):
   step = 0
   time_window = ValueWindow(100)
   loss_window = ValueWindow(100)
-  saver = tf.train.Saver(max_to_keep=5, keep_checkpoint_every_n_hours=2)
+  saver = tf.compat.v1.train.Saver(max_to_keep=5, keep_checkpoint_every_n_hours=2)
 
   # Train!
-  with tf.Session() as sess:
+  with tf.compat.v1.Session() as sess:
     try:
-      summary_writer = tf.summary.FileWriter(log_dir, sess.graph)
-      sess.run(tf.global_variables_initializer())
+      summary_writer = tf.compat.v1.summary.FileWriter(log_dir, sess.graph)
+      sess.run(tf.compat.v1.global_variables_initializer())
 
       if args.restore_step:
         # Restore from a checkpoint if the user requested it.

@@ -31,16 +31,16 @@ class Tacotron():
         of steps in the output time series, F is num_freq, and values are entries in the linear
         spectrogram. Only needed for training.
     '''
-    with tf.variable_scope('inference') as scope:
+    with tf.compat.v1.variable_scope('inference') as scope:
       is_training = linear_targets is not None
-      batch_size = tf.shape(inputs)[0]
+      batch_size = tf.shape(input=inputs)[0]
       hp = self._hparams
 
       # Embeddings
-      embedding_table = tf.get_variable(
+      embedding_table = tf.compat.v1.get_variable(
         'embedding', [len(symbols), hp.embed_depth], dtype=tf.float32,
-        initializer=tf.truncated_normal_initializer(stddev=0.5))
-      embedded_inputs = tf.nn.embedding_lookup(embedding_table, inputs)          # [N, T_in, embed_depth=256]
+        initializer=tf.compat.v1.truncated_normal_initializer(stddev=0.5))
+      embedded_inputs = tf.nn.embedding_lookup(params=embedding_table, ids=inputs)          # [N, T_in, embed_depth=256]
 
       # Encoder
       prenet_outputs = prenet(embedded_inputs, is_training, hp.prenet_depths)    # [N, T_in, prenet_depths[-1]=128]
@@ -86,10 +86,10 @@ class Tacotron():
       # Add post-processing CBHG:
       post_outputs = post_cbhg(mel_outputs, hp.num_mels, is_training,            # [N, T_out, postnet_depth=256]
                                hp.postnet_depth)
-      linear_outputs = tf.layers.dense(post_outputs, hp.num_freq)                # [N, T_out, F]
+      linear_outputs = tf.compat.v1.layers.dense(post_outputs, hp.num_freq)                # [N, T_out, F]
 
       # Grab alignments from the final decoder state:
-      alignments = tf.transpose(final_decoder_state[0].alignment_history.stack(), [1, 2, 0])
+      alignments = tf.transpose(a=final_decoder_state[0].alignment_history.stack(), perm=[1, 2, 0])
 
       self.inputs = inputs
       self.input_lengths = input_lengths
@@ -113,13 +113,13 @@ class Tacotron():
 
   def add_loss(self):
     '''Adds loss to the model. Sets "loss" field. initialize must have been called.'''
-    with tf.variable_scope('loss') as scope:
+    with tf.compat.v1.variable_scope('loss') as scope:
       hp = self._hparams
-      self.mel_loss = tf.reduce_mean(tf.abs(self.mel_targets - self.mel_outputs))
+      self.mel_loss = tf.reduce_mean(input_tensor=tf.abs(self.mel_targets - self.mel_outputs))
       l1 = tf.abs(self.linear_targets - self.linear_outputs)
       # Prioritize loss for frequencies under 3000 Hz.
       n_priority_freq = int(3000 / (hp.sample_rate * 0.5) * hp.num_freq)
-      self.linear_loss = 0.5 * tf.reduce_mean(l1) + 0.5 * tf.reduce_mean(l1[:,:,0:n_priority_freq])
+      self.linear_loss = 0.5 * tf.reduce_mean(input_tensor=l1) + 0.5 * tf.reduce_mean(input_tensor=l1[:,:,0:n_priority_freq])
       self.loss = self.mel_loss + self.linear_loss
 
 
@@ -129,20 +129,20 @@ class Tacotron():
     Args:
       global_step: int32 scalar Tensor representing current global step in training
     '''
-    with tf.variable_scope('optimizer') as scope:
+    with tf.compat.v1.variable_scope('optimizer') as scope:
       hp = self._hparams
       if hp.decay_learning_rate:
         self.learning_rate = _learning_rate_decay(hp.initial_learning_rate, global_step)
       else:
-        self.learning_rate = tf.convert_to_tensor(hp.initial_learning_rate)
-      optimizer = tf.train.AdamOptimizer(self.learning_rate, hp.adam_beta1, hp.adam_beta2)
+        self.learning_rate = tf.convert_to_tensor(value=hp.initial_learning_rate)
+      optimizer = tf.compat.v1.train.AdamOptimizer(self.learning_rate, hp.adam_beta1, hp.adam_beta2)
       gradients, variables = zip(*optimizer.compute_gradients(self.loss))
       self.gradients = gradients
       clipped_gradients, _ = tf.clip_by_global_norm(gradients, 1.0)
 
       # Add dependency on UPDATE_OPS; otherwise batchnorm won't work correctly. See:
       # https://github.com/tensorflow/tensorflow/issues/1122
-      with tf.control_dependencies(tf.get_collection(tf.GraphKeys.UPDATE_OPS)):
+      with tf.control_dependencies(tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.UPDATE_OPS)):
         self.optimize = optimizer.apply_gradients(zip(clipped_gradients, variables),
           global_step=global_step)
 
