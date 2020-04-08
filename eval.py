@@ -6,10 +6,11 @@ from synthesizer import Synthesizer
 
 
 sentences = [
-  'ni3 xu1 yao4 zhei4 yangr4 de5 yi2 ge4 li4 zi5', # 你需要这样儿的一个例子。
-  'zhong1 wen2 ta1 ke5 chuang4', # 中文 tacotron
-  'duo1 can1 jia1 hu4 wai4 huo2 dong4 hu1 xi1 qing1 xin1 kong1 qi4 la5', # 多参加户外活动，呼吸清新空气啦。
-  'qi1 yue4 qi1 hao4 di4 yi1 chang2 you3 xiao2 yu3 yue4 dui4 ou1', # 7.7 第一场有小雨乐队哦！
+  '你需要 zhei4 yangr4 的一个例子', # g2pM doesn't handle erhua (yang4 er5 -> yangr4)
+  '中文 ta1 ke5 chuang4', # 中文 tacotron
+  '多参加户外活动呼吸清新空气啦',
+  'qi1 yue4 qi1 ri4 di4 yi1 chang2 yan3 chu1 you3 xiao2 yu3 yue4 dui4', # g2pM doesn't handle tone change (chang3 -> chang2, xiao3 -> xiao2)
+  '七月七日第一场演出有小雨乐队',
 ]
 
 

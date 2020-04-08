@@ -2,6 +2,7 @@
 # depends on your platform. It is assumed you have already installed tensorflow.
 tensorflow-gpu<2.0
 falcon
+g2pM
 inflect
 librosa
 matplotlib
