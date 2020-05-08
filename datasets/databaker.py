@@ -23,13 +23,17 @@ def build_from_path(in_dir, out_dir, num_workers=1, tqdm=lambda x: x):
   executor = ProcessPoolExecutor(max_workers=num_workers)
   futures = []
   index = 1
-  with open(os.path.join(in_dir, 'metadata.csv'), encoding='utf-8') as f:
+  with open(os.path.join(in_dir, 'ProsodyLabeling', '000001-010000.txt'), encoding='utf-8') as f:
+    wav_id = ''
     for line in f:
-      parts = line.strip().split('|')
-      wav_path = os.path.join(in_dir, 'Wave', '%s.wav' % parts[0])
-      text = parts[1]
-      futures.append(executor.submit(partial(_process_utterance, out_dir, index, wav_path, text)))
-      index += 1
+      if line.startswith('\t'):
+        wav_path = os.path.join(in_dir, 'Wave', '%s.wav' % wav_id)
+        text = line.strip()
+        futures.append(executor.submit(partial(_process_utterance, out_dir, index, wav_path, text)))
+        index += 1
+      else:
+        parts = line.strip().split('\t')
+        wav_id = parts[0]
   return [future.result() for future in tqdm(futures)]
 
 
